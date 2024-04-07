@@ -2,6 +2,7 @@ import BackgroundPattern from "@/components/background-pattern";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import PetContextProvider from "@/context/pet-context-provider";
+import { Pet } from "@/lib/types";
 import React from "react";
 
 type LayoutProps = {
@@ -12,7 +13,7 @@ export default async function Layout({ children }: LayoutProps) {
   const response = await fetch(
     "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
   );
-  const data = await response.json();
+  const data: Pet[] = await response.json();
 
   return (
     <>
