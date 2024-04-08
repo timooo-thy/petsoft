@@ -7,7 +7,7 @@ export default function PetList() {
   const { pets, handleActivePetId, activePetId } = usePetContext();
 
   return (
-    <ul className="bg-white border-b border-black/[0.08]">
+    <ul className="bg-white border-b border-light">
       {pets.map((pet) => {
         return (
           <li key={pet.id}>
