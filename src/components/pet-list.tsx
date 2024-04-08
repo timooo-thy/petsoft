@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 export default function PetList() {
-  const { pets, handleActivePetId, activePetId } = usePetContext();
+  const { filteredPets, handleActivePetId, activePetId } = usePetContext();
 
   return (
     <ul className="bg-white border-b border-light">
-      {pets.map((pet) => {
+      {filteredPets.map((pet) => {
         return (
           <li key={pet.id}>
             <button
