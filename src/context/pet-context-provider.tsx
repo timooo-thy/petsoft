@@ -10,6 +10,7 @@ type PetContextValue = {
   setPets: React.Dispatch<React.SetStateAction<Pet[]>>;
   handleActivePetId: (id: string) => void;
   handleCheckout: () => void;
+  handleAddPet: (newPet: Omit<Pet, "id">) => void;
 };
 
 export const PetContext = createContext<PetContextValue | null>(null);
@@ -38,6 +39,16 @@ export default function PetContextProvider({
     setActivePetId(null);
   };
 
+  const handleAddPet = (newPet: Omit<Pet, "id">) => {
+    setPets((prevPets) => [
+      ...prevPets,
+      {
+        ...newPet,
+        id: Date.now().toString(),
+      },
+    ]);
+  };
+
   return (
     <PetContext.Provider
       value={{
@@ -48,6 +59,7 @@ export default function PetContextProvider({
         setPets,
         handleActivePetId,
         handleCheckout,
+        handleAddPet,
       }}
     >
       {children}
