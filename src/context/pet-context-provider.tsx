@@ -1,14 +1,15 @@
 "use client";
 import { Pet } from "@/lib/types";
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 
 type PetContextValue = {
   activePetId: string | null;
-  filteredPets: Pet[];
   selectedPet: Pet | undefined;
   totalPets: number;
+  pets: Pet[];
+  setPets: React.Dispatch<React.SetStateAction<Pet[]>>;
   handleActivePetId: (id: string) => void;
-  handleFilteredPets: (search: string) => void;
+  handleCheckout: () => void;
 };
 
 export const PetContext = createContext<PetContextValue | null>(null);
@@ -24,7 +25,6 @@ export default function PetContextProvider({
 }: PetContextProviderProps) {
   const [pets, setPets] = useState<Pet[]>(data);
   const [activePetId, setActivePetId] = useState<string | null>(null);
-  const [filteredPets, setFilteredPets] = useState<Pet[]>(pets);
 
   const selectedPet = pets.find((pet) => pet.id === activePetId);
   const totalPets = pets.length;
@@ -33,12 +33,9 @@ export default function PetContextProvider({
     setActivePetId(id);
   };
 
-  const handleFilteredPets = (search: string) => {
-    setFilteredPets(
-      pets.filter((pet) =>
-        pet.name.toLowerCase().includes(search.toLowerCase())
-      )
-    );
+  const handleCheckout = () => {
+    setPets((prevPets) => prevPets.filter((pet) => pet.id !== activePetId));
+    setActivePetId(null);
   };
 
   return (
@@ -46,10 +43,11 @@ export default function PetContextProvider({
       value={{
         activePetId,
         selectedPet,
-        filteredPets,
+        pets,
         totalPets,
+        setPets,
         handleActivePetId,
-        handleFilteredPets,
+        handleCheckout,
       }}
     >
       {children}
