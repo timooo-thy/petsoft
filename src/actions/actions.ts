@@ -14,9 +14,16 @@ export async function addPet(data: FormData) {
     age: parseInt(data.get("age") as string),
     notes: data.get("notes") as string,
   };
-  await prisma.pet.create({
-    data: pet,
-  });
+
+  try {
+    await prisma.pet.create({
+      data: pet,
+    });
+  } catch (error) {
+    return {
+      error: "An error occurred while adding the pet.",
+    };
+  }
 
   revalidatePath("/app/dashboard");
 }
@@ -32,12 +39,19 @@ export async function editPet(data: FormData, id: string | undefined) {
     age: parseInt(data.get("age") as string),
     notes: data.get("notes") as string,
   };
-  await prisma.pet.update({
-    where: {
-      id: id,
-    },
-    data: pet,
-  });
+
+  try {
+    await prisma.pet.update({
+      where: {
+        id: id,
+      },
+      data: pet,
+    });
+  } catch (error) {
+    return {
+      error: "An error occurred while editing the pet.",
+    };
+  }
 
   revalidatePath("/app/dashboard");
 }

@@ -5,6 +5,7 @@ import PetContextProvider from "@/context/pet-context-provider";
 import SearchContextProvider from "@/context/search-context-provider";
 import React from "react";
 import prisma from "@/lib/db";
+import { Toaster } from "@/components/ui/sonner";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export default async function Layout({ children }: LayoutProps) {
         </SearchContextProvider>
         <Footer />
       </div>
+      <Toaster richColors />
     </>
   );
 }
