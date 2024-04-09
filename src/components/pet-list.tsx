@@ -2,13 +2,16 @@
 import { usePetContext, useSearchQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useMemo } from "react";
 
 export default function PetList() {
   const { handleActivePetId, activePetId, pets } = usePetContext();
   const { searchQuery } = useSearchQuery();
-  const filteredPets = pets.filter((pet) =>
-    pet.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPets = useMemo(() => {
+    return pets.filter((pet) =>
+      pet.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [pets, searchQuery]);
 
   return (
     <ul className="bg-white border-b border-light">

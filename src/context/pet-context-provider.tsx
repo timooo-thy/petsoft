@@ -1,4 +1,5 @@
 "use client";
+import { addPet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
 import { createContext, useState } from "react";
 
@@ -7,11 +8,7 @@ type PetContextValue = {
   selectedPet: Pet | undefined;
   totalPets: number;
   pets: Pet[];
-  setPets: React.Dispatch<React.SetStateAction<Pet[]>>;
   handleActivePetId: (id: string) => void;
-  handleCheckout: () => void;
-  handleAddPet: (newPet: Omit<Pet, "id">) => void;
-  handleEditPet: (editedPet: Omit<Pet, "id">, id: string) => void;
 };
 
 export const PetContext = createContext<PetContextValue | null>(null);
@@ -23,9 +20,8 @@ type PetContextProviderProps = {
 
 export default function PetContextProvider({
   children,
-  data,
+  data: pets,
 }: PetContextProviderProps) {
-  const [pets, setPets] = useState<Pet[]>(data);
   const [activePetId, setActivePetId] = useState<string | null>(null);
 
   const selectedPet = pets.find((pet) => pet.id === activePetId);
@@ -35,34 +31,6 @@ export default function PetContextProvider({
     setActivePetId(id);
   };
 
-  const handleCheckout = () => {
-    setPets((prevPets) => prevPets.filter((pet) => pet.id !== activePetId));
-    setActivePetId(null);
-  };
-
-  const handleAddPet = (newPet: Omit<Pet, "id">) => {
-    setPets((prevPets) => [
-      ...prevPets,
-      {
-        ...newPet,
-        id: Date.now().toString(),
-      },
-    ]);
-  };
-
-  const handleEditPet = (editedPet: Omit<Pet, "id">, id: string) => {
-    setPets((prevPets) =>
-      prevPets.map((pet) =>
-        pet.id === id
-          ? {
-              ...editedPet,
-              id: id,
-            }
-          : pet
-      )
-    );
-  };
-
   return (
     <PetContext.Provider
       value={{
@@ -70,11 +38,7 @@ export default function PetContextProvider({
         selectedPet,
         pets,
         totalPets,
-        setPets,
         handleActivePetId,
-        handleCheckout,
-        handleAddPet,
-        handleEditPet,
       }}
     >
       {children}
