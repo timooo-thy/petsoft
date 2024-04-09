@@ -14,19 +14,21 @@ import { useState } from "react";
 type PetButtonProps = {
   actionType: "edit" | "checkout" | "add";
   children?: React.ReactNode;
+  isPending?: boolean;
   onClick?: () => void;
 };
 
 export default function PetButton({
   actionType,
   children,
+  isPending,
   onClick,
 }: PetButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (actionType === "checkout") {
     return (
-      <Button variant="secondary" onClick={onClick}>
+      <Button variant="secondary" onClick={onClick} disabled={isPending}>
         {children}
       </Button>
     );

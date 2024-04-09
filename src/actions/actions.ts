@@ -21,7 +21,7 @@ export async function addPet(data: FormData) {
     });
   } catch (error) {
     return {
-      error: "An error occurred while adding the pet.",
+      message: "An error occurred while adding the pet.",
     };
   }
 
@@ -49,7 +49,25 @@ export async function editPet(data: FormData, id: string | undefined) {
     });
   } catch (error) {
     return {
-      error: "An error occurred while editing the pet.",
+      message: "An error occurred while editing the pet.",
+    };
+  }
+
+  revalidatePath("/app/dashboard");
+}
+
+export async function deletePet(id: string | undefined) {
+  await sleep(2000);
+
+  try {
+    await prisma.pet.delete({
+      where: {
+        id: id,
+      },
+    });
+  } catch (error) {
+    return {
+      message: "An error occurred while checking out the pet.",
     };
   }
 

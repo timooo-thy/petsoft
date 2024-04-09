@@ -25,14 +25,14 @@ export default function PetForm({
         if (actionType === "edit") {
           const error = await editPet(formData, selectedPet?.id);
           if (error) {
-            toast.warning(error.error);
+            toast.warning(error.message);
             return;
           }
           onFormSubmission();
         } else {
           const error = await addPet(formData);
           if (error) {
-            toast.warning(error.error);
+            toast.warning(error.message);
             return;
           }
           onFormSubmission();
