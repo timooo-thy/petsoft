@@ -1,20 +1,17 @@
 "use client";
 import { usePetContext } from "@/lib/hooks";
-import { Pet } from "@/lib/types";
 import Image from "next/image";
 import PetButton from "./pet-button";
+import { Pet } from "@prisma/client";
 
 export default function PetDetails() {
-  const { selectedPet, handleCheckoutPet } = usePetContext();
+  const { selectedPet } = usePetContext();
 
   return (
     <section className="flex flex-col w-full h-full">
       {selectedPet ? (
         <>
-          <TopBar
-            selectedPet={selectedPet}
-            handleCheckoutPet={handleCheckoutPet}
-          />
+          <TopBar selectedPet={selectedPet} />
           <OtherInfo selectedPet={selectedPet} />
           <Notes selectedPet={selectedPet} />
         </>
@@ -27,15 +24,15 @@ export default function PetDetails() {
 
 type Props = {
   selectedPet: Pet;
-  handleCheckoutPet?: () => void;
 };
 
-function TopBar({ selectedPet, handleCheckoutPet }: Props) {
+function TopBar({ selectedPet }: Props) {
+  const { handleCheckoutPet } = usePetContext();
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
         src={
-          selectedPet?.imageUrl ||
+          selectedPet.imageUrl ||
           "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
         }
         alt="Selected pet image"
@@ -44,7 +41,7 @@ function TopBar({ selectedPet, handleCheckoutPet }: Props) {
         className="h-[75px] w-[75px] rounded-full object-cover"
       />
       <h2 className="text-3xl font-semibold leading-7 ml-5">
-        {selectedPet?.name}
+        {selectedPet.name}
       </h2>
 
       <div className="ml-auto flex gap-x-2">
