@@ -36,4 +36,6 @@ export const petFormSchema = z
       "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
   }));
 
+export const petIdSchema = z.string().cuid();
+
 export type TPetForm = z.infer<typeof petFormSchema>;

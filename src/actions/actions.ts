@@ -1,12 +1,10 @@
 "use server";
 import prisma from "@/lib/db";
 import { sleep } from "@/lib/utils";
-import { PetEssentials } from "@/lib/types";
 import { revalidatePath } from "next/cache";
-import { Pet } from "@prisma/client";
-import { petFormSchema } from "@/lib/validation";
+import { petFormSchema, petIdSchema } from "@/lib/validation";
 
-export async function addPet(newPet: PetEssentials) {
+export async function addPet(newPet: unknown) {
   await sleep(1500);
 
   const validatedPet = petFormSchema.safeParse(newPet);
@@ -21,7 +19,6 @@ export async function addPet(newPet: PetEssentials) {
       data: validatedPet.data,
     });
   } catch (error) {
-    console.error(error);
     return {
       message: "An error occurred while adding the pet.",
     };
@@ -29,18 +26,29 @@ export async function addPet(newPet: PetEssentials) {
   revalidatePath("/app/dashboard");
 }
 
-export async function editPet(
-  newPetData: PetEssentials,
-  id: string | undefined
-) {
+export async function editPet(newPetData: unknown, id: unknown) {
   await sleep(1500);
+
+  const validatedId = petIdSchema.safeParse(id);
+  if (!validatedId.success) {
+    return {
+      message: "Invalid pet id",
+    };
+  }
+
+  const validatedPet = petFormSchema.safeParse(newPetData);
+  if (!validatedPet.success) {
+    return {
+      message: "Invalid pet data shape",
+    };
+  }
 
   try {
     await prisma.pet.update({
       where: {
-        id: id,
+        id: validatedId.data,
       },
-      data: newPetData,
+      data: validatedPet.data,
     });
   } catch (error) {
     return {
@@ -51,13 +59,20 @@ export async function editPet(
   revalidatePath("/app/dashboard");
 }
 
-export async function deletePet(id: Pet["id"]) {
+export async function deletePet(id: unknown) {
   await sleep(1500);
+
+  const validatedId = petIdSchema.safeParse(id);
+  if (!validatedId.success) {
+    return {
+      message: "Invalid pet id",
+    };
+  }
 
   try {
     await prisma.pet.delete({
       where: {
-        id: id,
+        id: validatedId.data,
       },
     });
   } catch (error) {
