@@ -30,16 +30,11 @@ export async function editPet(newPetData: unknown, id: unknown) {
   await sleep(1500);
 
   const validatedId = petIdSchema.safeParse(id);
-  if (!validatedId.success) {
-    return {
-      message: "Invalid pet id",
-    };
-  }
-
   const validatedPet = petFormSchema.safeParse(newPetData);
-  if (!validatedPet.success) {
+
+  if (!validatedPet.success || !validatedId.success) {
     return {
-      message: "Invalid pet data shape",
+      message: "Invalid pet data",
     };
   }
 
@@ -65,7 +60,7 @@ export async function deletePet(id: unknown) {
   const validatedId = petIdSchema.safeParse(id);
   if (!validatedId.success) {
     return {
-      message: "Invalid pet id",
+      message: "Invalid pet data",
     };
   }
 
