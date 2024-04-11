@@ -7,14 +7,13 @@ import { Pet } from "@prisma/client";
 
 export async function addPet(newPet: PetEssentials) {
   await sleep(1500);
+  console.log(newPet);
   try {
     await prisma.pet.create({
       data: newPet,
-      select: {
-        id: true,
-      },
     });
   } catch (error) {
+    console.error(error);
     return {
       message: "An error occurred while adding the pet.",
     };

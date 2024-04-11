@@ -18,16 +18,16 @@ export default function DashboardPage() {
         <div className="md:row-start-1 md:row-span-1 md:col-start-1 md:col-span-1">
           <SearchForm />
         </div>
-        <div className="overflow-scroll">
-          <div className="relative md:row-start-2 md:row-span-full md:col-start-1 md:col-span-1">
-            <ContentBlock>
-              <PetList />
-            </ContentBlock>
-          </div>
+
+        <div className="h-full relative md:row-start-2 md:row-span-full md:col-start-1 md:col-span-1">
+          <ContentBlock>
+            <PetList />
+            <div className="absolute bottom-4 right-4">
+              <PetButton actionType="add" />
+            </div>
+          </ContentBlock>
         </div>
-        <div className="absolute bottom-3 right-[600px]">
-          <PetButton actionType="add" />
-        </div>
+
         <div className="md:row-start-1 md:row-span-full md:col-start-2 md:col-span-full">
           <ContentBlock>
             <PetDetails />
