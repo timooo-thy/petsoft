@@ -7,49 +7,13 @@ import FormButton from "./form-button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { get } from "http";
+import { petFormSchema, TPetForm } from "@/lib/validation";
 
 type PetFormProps = {
   actionType: "edit" | "add";
   onFormSubmission: () => void;
 };
-
-type TPetForm = {
-  name: string;
-  ownerName: string;
-  imageUrl: string;
-  age: number;
-  notes: string;
-};
-
-const petFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: "Name is required" })
-    .max(20, { message: "Name should be less than 20 characters" }),
-  ownerName: z
-    .string()
-    .trim()
-    .min(1, { message: "Owner Name is required" })
-    .max(20, { message: "Owner Name should be less than 20 characters" }),
-  imageUrl: z.union([
-    z.string().trim().url({ message: "Invalid URL" }),
-    z.literal(""),
-  ]),
-  age: z.coerce
-    .number()
-    .int()
-    .min(1, { message: "Age is required" })
-    .positive()
-    .max(20, { message: "Age should be less than 20" }),
-  notes: z.union([
-    z
-      .string()
-      .trim()
-      .max(200, { message: "Notes should be less than 200 characters" }),
-    z.literal(""),
-  ]),
-});
 
 export default function PetForm({
   actionType,
@@ -59,6 +23,7 @@ export default function PetForm({
   const {
     register,
     trigger,
+    getValues,
     formState: { errors },
   } = useForm<TPetForm>({
     resolver: zodResolver(petFormSchema),
@@ -67,24 +32,19 @@ export default function PetForm({
   return (
     <form
       className="flex flex-col"
-      action={async (formData) => {
+      action={async () => {
         const result = await trigger();
         if (!result) return;
 
-        const petData = {
-          name: formData.get("name") as string,
-          ownerName: formData.get("ownerName") as string,
-          imageUrl:
-            (formData.get("imageUrl") as string) ||
-            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-          age: parseInt(formData.get("age") as string),
-          notes: formData.get("notes") as string,
-        };
-
         onFormSubmission();
 
-        if (actionType === "edit") handleEditPet(petData);
-        else handleAddPet(petData);
+        const petData = getValues();
+        petData.imageUrl =
+          petData.imageUrl ||
+          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png";
+
+        if (actionType === "edit") await handleEditPet(petData);
+        else await handleAddPet(petData);
       }}
     >
       <div className="space-y-3">
