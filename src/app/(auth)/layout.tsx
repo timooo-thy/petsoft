@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Icon from "@/components/icon";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex justify-center items-center min-h-dvh flex-col gap-y-5">
-      <Image src="/icon.svg" alt="icon" width={31} height={31} />
+      <Icon />
       {children}
     </div>
   );

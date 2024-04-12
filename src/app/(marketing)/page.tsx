@@ -1,3 +1,4 @@
+import Icon from "@/components/icon";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,7 +15,7 @@ export default function Home() {
       />
       <div>
         <Link href="/">
-          <Image src="/logo.svg" width={31} height={31} alt="PetSoft logo" />
+          <Icon />
         </Link>
         <h1 className="text-5xl font-semibold my-6 max-w-[500px]">
           Manage your <span className="font-extrabold">pet daycare</span> with

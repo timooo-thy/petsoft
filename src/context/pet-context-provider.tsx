@@ -20,16 +20,16 @@ export const PetContext = createContext<PetContextValue | null>(null);
 
 type PetContextProviderProps = {
   children: React.ReactNode;
-  data: Pet[];
+  pets: Pet[];
 };
 
 export default function PetContextProvider({
   children,
-  data,
+  pets,
 }: PetContextProviderProps) {
   // state management
   const [activePetId, setActivePetId] = useState<string | null>(null);
-  const [optimisticPets, setOptimisticPets] = useOptimistic(data);
+  const [optimisticPets, setOptimisticPets] = useOptimistic(pets);
 
   // derived states
   const selectedPet = optimisticPets.find((pet) => pet.id === activePetId);

@@ -6,8 +6,8 @@ import React from "react";
 export default function SignupPage() {
   return (
     <main className="md:w-1/3 w-2/3">
-      <H1 className="text-center mb-5">Signup</H1>
-      <AuthForm />
+      <H1 className="text-center mb-5">Sign Up</H1>
+      <AuthForm type="signUp" />
       <p className="mt-6 text-sm text-zinc-500">
         Already have an account?{" "}
         <Link href="/login" className="font-medium">
