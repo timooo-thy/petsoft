@@ -75,7 +75,7 @@ const config = {
           request.nextUrl.pathname.includes("/login") ||
           request.nextUrl.pathname.includes("/signup")
         ) {
-          return Response.redirect(new URL("/app/dashboard", request.url));
+          return Response.redirect(new URL("/payment", request.url));
         }
         return true;
       }
