@@ -8,10 +8,11 @@ import bcrypt from "bcryptjs";
 import { authCheck } from "@/lib/server-utils";
 import { Prisma } from "@prisma/client";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
+import { stripe } from "@/lib/stripe";
 
 // User actions
 export async function logIn(prevState: unknown, formData: unknown) {
-  await sleep(1500);
   if (!(formData instanceof FormData)) {
     return {
       message: "Invalid form data",
@@ -30,7 +31,6 @@ export async function logIn(prevState: unknown, formData: unknown) {
 }
 
 export async function signUp(prevState: unknown, formData: unknown) {
-  await sleep(1500);
   if (!(formData instanceof FormData)) {
     return {
       message: "Invalid form data",
@@ -71,14 +71,11 @@ export async function signUp(prevState: unknown, formData: unknown) {
 }
 
 export async function logOut() {
-  await sleep(1500);
   await signOut({ redirectTo: "/" });
 }
 
 // Pet actions
 export async function addPet(newPet: unknown) {
-  await sleep(1500);
-
   const session = await authCheck();
   const validatedPet = petFormSchema.safeParse(newPet);
   if (!validatedPet.success) {
@@ -103,8 +100,6 @@ export async function addPet(newPet: unknown) {
 }
 
 export async function editPet(newPetData: unknown, id: unknown) {
-  await sleep(1500);
-
   const session = await authCheck();
   const validatedId = petIdSchema.safeParse(id);
   const validatedPet = petFormSchema.safeParse(newPetData);
@@ -133,8 +128,6 @@ export async function editPet(newPetData: unknown, id: unknown) {
 }
 
 export async function deletePet(id: unknown) {
-  await sleep(1500);
-
   const session = await authCheck();
   const validatedId = petIdSchema.safeParse(id);
   if (!validatedId.success) {
@@ -157,4 +150,25 @@ export async function deletePet(id: unknown) {
   }
 
   revalidatePath("/app/dashboard");
+}
+
+// Payment actions
+
+export async function createCheckoutSession() {
+  const session = await authCheck();
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer_email: session.user.email as string,
+    line_items: [
+      {
+        price: "price_1P58WTBriKu705FYFBSjOYBE",
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_URL}/payment?success=true`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment?cancelled=true`,
+  });
+
+  redirect(checkoutSession.url as string);
 }

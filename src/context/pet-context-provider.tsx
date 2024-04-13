@@ -4,6 +4,7 @@ import { PetEssentials } from "@/lib/types";
 import { Pet } from "@prisma/client";
 import { createContext, useOptimistic, useState } from "react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 type PetContextValue = {
   activePetId: Pet["id"] | null;
@@ -43,7 +44,13 @@ export default function PetContextProvider({
   const handleAddPet = async (newPet: PetEssentials) => {
     setOptimisticPets((prevPets) => [
       ...prevPets,
-      { ...newPet, id: "", createdAt: new Date(), updatedAt: new Date() },
+      {
+        ...newPet,
+        id: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: "",
+      },
     ]);
     const error = await addPet(newPet);
     if (error) {

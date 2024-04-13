@@ -53,12 +53,31 @@ const config = {
         return false;
       }
 
-      if (isLoggedIn && accessPage) {
+      if (isLoggedIn && accessPage && !auth?.user.subscriptionPlan) {
+        return Response.redirect(new URL("/payment", request.url));
+      }
+
+      if (isLoggedIn && accessPage && auth?.user.subscriptionPlan) {
         return true;
       }
 
-      if (isLoggedIn && !accessPage) {
+      if (
+        isLoggedIn &&
+        (request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup")) &&
+        auth?.user.subscriptionPlan
+      ) {
         return Response.redirect(new URL("/app/dashboard", request.url));
+      }
+
+      if (isLoggedIn && !accessPage && !auth?.user.subscriptionPlan) {
+        if (
+          request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup")
+        ) {
+          return Response.redirect(new URL("/app/dashboard", request.url));
+        }
+        return true;
       }
 
       if (!isLoggedIn && !accessPage) {
@@ -67,16 +86,29 @@ const config = {
 
       return false;
     },
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user, trigger }) => {
       if (user) {
         token.userId = user.id;
+        token.email = user.email as string;
+        token.subscriptionPlan = user.subscriptionPlan;
+      }
+
+      if (trigger === "update") {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: token.email,
+          },
+        });
+        if (user) {
+          token.subscriptionPlan = user.subscriptionPlan;
+        }
       }
       return token;
     },
     session: ({ session, token }) => {
-      if (session.user) {
-        session.user.id = token.userId;
-      }
+      session.user.id = token.userId;
+      session.user.subscriptionPlan = token.subscriptionPlan;
+
       return session;
     },
   },
