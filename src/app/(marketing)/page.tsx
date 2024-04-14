@@ -14,9 +14,7 @@ export default function Home() {
         className=""
       />
       <div>
-        <Link href="/">
-          <Icon />
-        </Link>
+        <Icon />
         <h1 className="text-5xl font-semibold my-6 max-w-[500px]">
           Manage your <span className="font-extrabold">pet daycare</span> with
           ease

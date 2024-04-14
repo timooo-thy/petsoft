@@ -1,5 +1,10 @@
 import prisma from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
+
+type Metadata = {
+  userId: string;
+};
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -9,7 +14,7 @@ export async function POST(req: Request) {
     return Response.json(null, { status: 400 });
   }
 
-  let event;
+  let event: Stripe.Event;
 
   try {
     event = stripe.webhooks.constructEvent(
@@ -23,9 +28,12 @@ export async function POST(req: Request) {
 
   switch (event.type) {
     case "checkout.session.completed":
+      const completedEvent = event.data.object as Stripe.Checkout.Session & {
+        metadata: Metadata;
+      };
       await prisma.user.update({
         where: {
-          email: event.data.object.customer_email as string,
+          id: completedEvent.metadata.userId,
         },
         data: {
           subscriptionPlan: true,

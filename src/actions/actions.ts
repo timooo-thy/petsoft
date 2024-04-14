@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs";
 import { authCheck } from "@/lib/server-utils";
 import { Prisma } from "@prisma/client";
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
 
 // User actions
@@ -166,9 +165,12 @@ export async function createCheckoutSession() {
       },
     ],
     mode: "payment",
+    metadata: {
+      userId: session.user.id,
+    },
     success_url: `${process.env.NEXT_PUBLIC_URL}/payment?success=true`,
     cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment?cancelled=true`,
   });
 
-  redirect(checkoutSession.url as string);
+  return { sessionId: checkoutSession.id };
 }
